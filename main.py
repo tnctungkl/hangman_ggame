@@ -4,24 +4,21 @@ import nltk
 import tkinter as tk
 from tkinter import messagebox
 
-# Download the NLTK words dataset (only need to do this once)
+
 nltk.download('words')
 
-# Initialize Pygame
 pygame.init()
 
-# Constants
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
-# Load the English words dataset from NLTK
 word_list = nltk.corpus.words.words()
 
 
 class HangmanGame:
     def __init__(self):
-        self.word = random.choice(word_list).lower()  # Choose a random word from the dataset
+        self.word = random.choice(word_list).lower()
         self.guessed_letters = set()
         self.remaining_attempts = 6
         self.correct_letters = set()
@@ -44,10 +41,8 @@ class HangmanGame:
         self.correct_letters = set()
 
     def draw(self, screen):
-        # Clear the screen
         screen.fill((255, 255, 255))
 
-        # Draw hangman stages
         base_y = 450
         if self.remaining_attempts < 6:
             pygame.draw.line(screen, (0, 0, 0), (150, (base_y-100)), (350, (base_y-100)), 5)  # Base
@@ -65,7 +60,7 @@ class HangmanGame:
             pygame.draw.line(screen, (0, 0, 0), ((250+200), (320-90)), ((220+200), (390-90)), 5)  # Left leg
             pygame.draw.line(screen, (0, 0, 0), ((250+200), (320-90)), ((280+200), (390-90)), 5)  # Right leg
 
-        # Draw guessed letters
+        
         for i, letter in enumerate(ALPHABET):
             x = 50 + i * 30
             y = 500
@@ -77,24 +72,20 @@ class HangmanGame:
             letter_text = font.render(letter, True, color)
             screen.blit(letter_text, (x, y))
 
-        # Draw word display
         font = pygame.font.Font(None, 48)
         displayed_word = " ".join([letter if letter in self.correct_letters else "_" for letter in self.word])
         word_text = font.render(displayed_word, True, (0, 0, 0))
         screen.blit(word_text, (200, 400))
 
 
-# Initialize the game and the screen
 game = HangmanGame()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Hangman Game PRO")
 
-# Define button dimensions
 button_width = 200
 button_height = 60
 button_margin = 20
 
-# Button coordinates
 play_again_button_rect = pygame.Rect(SCREEN_WIDTH //
                                      2 - button_width //
                                      2, SCREEN_HEIGHT //
@@ -108,15 +99,14 @@ exit_button_rect = pygame.Rect(SCREEN_WIDTH //
                                button_width,
                                button_height)
 
-# Button colors
 button_color = (200, 200, 200)
 button_hover_color = (150, 150, 150)
 
-# Main game loop
+
 clock = pygame.time.Clock()
 running = True
 game_over = False
-result_printed = False  # To keep track of whether the result has been printed
+result_printed = False 
 
 while running:
     for event in pygame.event.get():
@@ -129,14 +119,14 @@ while running:
                 if event.unicode.lower() == 'r':
                     game.reset()
                     game_over = False
-                    result_printed = False  # Reset the result printing flag
+                    result_printed = False  
                 else:
                     running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if game_over and play_again_button_rect.collidepoint(event.pos):
                 game.reset()
                 game_over = False
-                result_printed = False  # Reset the result printing flag
+                result_printed = False 
             elif game_over and exit_button_rect.collidepoint(event.pos):
                 running = False
 
@@ -149,9 +139,9 @@ while running:
         game_over_text = "You won!" if all(letter in game.correct_letters for letter in game.word) else "You lost!"
 
         if game_over_text == "You lost!":
-            game_over_color = (255, 0, 0)  # Red color for "You lost!"
+            game_over_color = (255, 0, 0) 
         else:
-            game_over_color = (0, 255, 0)  # Green color for "You won!"
+            game_over_color = (0, 255, 0) 
 
         game_over_message = font.render(game_over_text, True, game_over_color)
         screen.blit(game_over_message, (SCREEN_WIDTH // 2 - 110, SCREEN_HEIGHT // 2 - 50))
@@ -178,15 +168,14 @@ while running:
                                 2, exit_button_rect.centery - exit_text.get_height() //
                                 2))
 
-        # Print the correct answer if not printed yet
+        
         if game_over_text == "You lost!" and not result_printed:
             correct_answer = "Correct answer: " + game.word
             print(correct_answer)
-            result_printed = True  # Set the result printing flag
+            result_printed = True  
 
-            # Show a messagebox with the correct answer
             root = tk.Tk()
-            root.withdraw()  # Hide the main window
+            root.withdraw()
             messagebox.showinfo("Game Over", correct_answer)
 
     pygame.display.flip()
